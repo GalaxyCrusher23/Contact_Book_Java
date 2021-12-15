@@ -19,7 +19,20 @@ public class GUI implements ActionListener, MouseListener {
   public static JLabel book_img_l = null;
   public static String userName = null;
   public static Dimension size = null;
+  public static JLabel Contact_label = null;
   int pageNum = 1;
+  
+  public static JLabel setPhoto(String imageLoc, int x, int y, int w, int l){
+	  
+    ImageIcon addContact_img = new ImageIcon(imageLoc);
+    Image temp_img = addContact_img.getImage().getScaledInstance(w, l, Image.SCALE_DEFAULT);
+    addContact_img = new ImageIcon(temp_img);
+    JLabel addContact_label = new JLabel(addContact_img);
+    bookPanel.add(addContact_label);
+    addContact_label.setLocation(x, y);
+
+	return addContact_label;
+  }
 
   GUI() {
 
@@ -60,10 +73,8 @@ public class GUI implements ActionListener, MouseListener {
     running = true;
     bookPanel.setBackground(bookPaperColor);
     book_img_l.setVisible(false);
-    ImageIcon addContact_img = new ImageIcon("images/plus.png");
-    JLabel addContact_label = new JLabel(addContact_img);
-    bookPanel.add(addContact_label);
-    addContact_label.setBounds(450, 450, 50, 50);
+
+	Contact_label = setPhoto("images/plus.png", 450, 450, 50, 50);
 
     bookPanel.repaint();
   }
