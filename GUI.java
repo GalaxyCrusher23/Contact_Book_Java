@@ -26,23 +26,26 @@ public class GUI implements ActionListener, MouseListener {
     book_img = new ImageIcon(book_img_str);
     book_img_l = new JLabel(book_img);
 
-    bookPanel.setPreferredSize(new Dimension(1000, 1000));
+    bookPanel.setPreferredSize(new Dimension(500, 500));
     // temporary
     Scanner myObj = new Scanner(System.in);
     userName = myObj.nextLine();
     // user name
     JLabel userName_label = new JLabel(userName);
-    size = userName_label.getPreferredSize();
-    userName_label.setBounds(500, 500, size.width, size.height);
+	
 
     bookPanel.setFocusable(true);
+	//bookPanel.setLayout(null);
     bookPanel.setBackground(Color.WHITE);
     bookPanel.addMouseListener(this);
-
     bookPanel.add(userName_label);
-    userName_label.setVisible(true);
+    size = userName_label.getPreferredSize();
+    userName_label.setBounds(250, 250, size.width, size.height);
+
     bookPanel.add(book_img_l);
+    userName_label.setVisible(true);
     book_img_l.setVisible(true);
+
 
     bookFrame.setTitle("Phone Book");
     bookFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,6 +60,10 @@ public class GUI implements ActionListener, MouseListener {
     running = true;
     bookPanel.setBackground(bookPaperColor);
     book_img_l.setVisible(false);
+    ImageIcon addContact_img = new ImageIcon("images/plus.png");
+    JLabel addContact_label = new JLabel(addContact_img);
+    bookPanel.add(addContact_label);
+    addContact_label.setBounds(450, 450, 50, 50);
 
     bookPanel.repaint();
   }

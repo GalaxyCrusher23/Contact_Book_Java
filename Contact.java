@@ -6,11 +6,16 @@ public class Contact{
   public String address;
   public int socialCreditScore;
 
-  public Contact(String n, int p, String cN, String a){
+  /*public Contact(String n, int p, String cN, String a){
     name = n;
     phone = p;
     companyName = cN;
     address = a;
+  }*/
+
+  public Contact()
+  {
+
   }
 
   public void setName(String n)
