@@ -17,7 +17,7 @@ public class Main {
                 InterFaces.start();
                 break;
             case 1:
-                InterFaces.InBook();
+                InterFaces.InBook(InterFaces.pageAtc);
                 break;
             default:
                 break;
