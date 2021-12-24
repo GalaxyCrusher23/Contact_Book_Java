@@ -1,17 +1,26 @@
+
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class InterFaces implements ActionListener, MouseListener {
     public static String book_img_str = "images/book.jpg";
     public static String plus_img_str = "images/plus.png";
-        public static JPanel startMenu = new JPanel();
+    public static String musicIcon_str = "images/music.jpg";
+    public static String noMusicIcon_str = "images/no_music.jpg";
+    
+    public static String musicRoot_str = "music/soviet_anthem.wav";
+    
+    public static JPanel startMenu = new JPanel();
     public static JPanel bookPages = new JPanel();
     public static JFrame window = new JFrame("Blackjack");
-    //public static ArrayList<JFrame> windowsForContacts = new ArrayList<JFrame>();
+    public static ArrayList<JFrame> windowsForContacts = new ArrayList<JFrame>();
     public static boolean running = false;
     public static Color bookPaperColor = new Color(255, 229, 153);
     public static ImageIcon book_img = null;
@@ -32,7 +41,19 @@ public class InterFaces implements ActionListener, MouseListener {
     public static String[] contactCompany;
     public static String[] contactAddress;
     public static String ttname;
+    public static boolean enteredPageAlready = false;
+    public static List<String> contactNamesList = new ArrayList<String>();
 
+    public static List<String> contactPhoneList = new ArrayList<String>();
+    public static List<String> contactCompanyList = new ArrayList<String>();
+    public static List<String> contactAddressList = new ArrayList<String>();
+
+    public static Clip clip = null;
+    public static AudioInputStream audioinput = null;
+
+    public static boolean music_paused = false;
+    public static long music_paused_ms_position = 0;
+    public static JButton playPauseButton;
 
     //JPanel template
     public static JPanel panel(JFrame frame, int w, int h, String bgi_loc, boolean drawLine, boolean closeOnOp) {
@@ -79,27 +100,43 @@ public class InterFaces implements ActionListener, MouseListener {
     }
 
     //JLabel template
-    public static JLabel tag(JPanel panel, String text, int x, int y, int width, int height) {
+    public static JLabel tag(JPanel panel, String text, int x, int y, int width, int height, boolean smartsize) {
+
         JLabel label = new JLabel(text);
-        Font labelFont = label.getFont();
-        String labelText = label.getText();
+        if(smartsize){
 
-        int stringWidth = label.getFontMetrics(labelFont).stringWidth(labelText);
+            Font labelFont = label.getFont();
+            String labelText = label.getText();
 
-        // Find out how much the font can grow in width.
-        double widthRatio = (double)width / (double)stringWidth;
+            int stringWidth = label.getFontMetrics(labelFont).stringWidth(labelText);
 
-        int newFontSize = (int)(labelFont.getSize() * widthRatio);
+            // Find out how much the font can grow in width.
+            double widthRatio = (double)width / (double)stringWidth;
 
-        // Pick a new font size so it will not be larger than the height of label.
-        int fontSizeToUse = Math.min(newFontSize, height);
+            int newFontSize = (int)(labelFont.getSize() * widthRatio);
 
-        // Set the label's font size to the newly determined size.
-        label.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
-        label.setBounds(x, y, width, height);
-        panel.add(label);
+            // Pick a new font size so it will not be larger than the height of label.
+            int fontSizeToUse = Math.min(newFontSize, height);
+
+            // Set the label's font size to the newly determined size.
+            label.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
+            label.setBounds(x, y, width, height);
+            panel.add(label);
+
+        }
+
+        else{
+            Font labelFont = label.getFont();
+            label.setFont(new Font(labelFont.getName(), Font.PLAIN, height));
+
+            label.setBounds(x, y, width, height);
+            panel.add(label);
+        }
+
         return label;
     }
+
+
     //JButton template
     public static JButton button(JPanel panel, String text, int x, int y, int width, int height, boolean action){
         JButton button = new JButton(text);
@@ -131,6 +168,28 @@ public class InterFaces implements ActionListener, MouseListener {
         startMenu = panel(window, windowWidth, windowLength, book_img_str, false, true);
         startMenu.setBackground(Color.black);
         startMenu.setLayout(null);
+        File musicRoot = new File(musicRoot_str);
+        try {
+            audioinput = AudioSystem.getAudioInputStream(musicRoot);
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            clip = AudioSystem.getClip();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+        try {
+            clip.open(audioinput);
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        clip.start();
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
 
         //Title Label
         //JLabel title = tag(startMenu, "Blackjack", windowWidth/2-(int)(titlefontSize/0.38), 0, 200, 100);
@@ -141,7 +200,37 @@ public class InterFaces implements ActionListener, MouseListener {
         //JButton play = button(startMenu, "Play", windowWidth/4-50, windowLength/2, 100, 50, true);
 
         //play.setBackground(bookPaperColor);
+        //dummy input
+        contactNames = new String[]{"Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Howie",};
 
+        contactPhone = new String[]{"911", "912", "913"};
+
+        contactCompany = new String[]{"Microsoft", "Shopify", "Tesla"};
+
+        contactAddress = new String[]{"One Microsoft Way, Redmond, WA, USA", "151 O\'Connor St Ground floor, Ottawa, ON K2P 2L8", "3500 Deer Creek Road. Palo Alto, California, United States of America"};
+
+        contactNames = new String[]{"Sanjeev", "Thomas", "HowieHowieHowieHowieHowie"};
+        Random rand = new Random();
+        for(int i = 0; i<37; i++){
+            contactNamesList.add(contactNames[rand.nextInt(3)]);
+            if (contactNamesList.get(i) == "Sanjeev"){
+                contactPhoneList.add("911-111-000000");
+                contactCompanyList.add("Microsoft");
+                contactAddressList.add("One Microsoft Way, Redmond, WA, USA");
+            }
+            else if (contactNamesList.get(i) == "Thomas"){
+                contactPhoneList.add("912");
+                contactCompanyList.add("Shopify");
+                contactAddressList.add("151 O\'Connor St Ground floor, Ottawa, ON K2P 2L8");
+            }
+            else if (contactNamesList.get(i) == "HowieHowieHowieHowieHowie"){
+                contactPhoneList.add("913");
+                contactCompanyList.add("Tesla");
+                contactAddressList.add("3500 Deer Creek Road. Palo Alto, California, United States of America");
+            }
+        }
+
+        System.out.println(contactNamesList.size());
         //panel setups
 
         startMenu.addMouseListener(new InterFaces());
@@ -151,11 +240,30 @@ public class InterFaces implements ActionListener, MouseListener {
         //System.out.println(window.getComponent(0).getWidth());
     }
     public static void InBook(int pageAt){ //
+
+
+
+
         System.out.println("inbook");
-        window.getContentPane().remove(bookPages);
-        bookPages = panel(window, bookWindowWidth, windowLength, "False", true, true);
-        bookPages.setBackground(bookPaperColor);
-        bookPages.setLayout(null);
+        //window.getContentPane().remove(bookPages);
+
+
+        if(!enteredPageAlready){
+            //startMenu.removeAll();
+            //window.getContentPane().remove(startMenu);
+            //startMenu.setVisible(false);
+
+            bookPages = panel(window, bookWindowWidth, windowLength, "False", true, true);
+            bookPages.setBackground(bookPaperColor);
+            bookPages.setLayout(null);
+            enteredPageAlready = true;
+
+        }
+        else{
+            bookPages.removeAll();
+
+        }
+
 
         //Title Label
         //JLabel title = tag(bookPages, "Blackjack", bookWindowWidth/2-(int)(titlefontSize/0.38), 0, 200, 100);
@@ -163,9 +271,43 @@ public class InterFaces implements ActionListener, MouseListener {
         //add button
         JButton addButton = button(bookPages, "Add contact", bookWindowWidth-150, windowLength-80, 130, 20, true, plus_img_str);
         addButton.setBackground(Color.ORANGE);
-        //next button
-        JButton nextButton = button(bookPages, "next page", bookWindowWidth-150, windowLength-105, 130, 20, true);
-        addButton.setBackground(Color.ORANGE);
+
+        //music button
+        String playPauseButtonMes = "play";
+        String this_musicIcon_str = noMusicIcon_str;
+        if(!music_paused){
+             this_musicIcon_str = musicIcon_str;
+            playPauseButtonMes = "pause";
+        }
+        playPauseButton = button(bookPages, "", bookWindowWidth-60, windowLength-150, 35, 40, false, this_musicIcon_str);
+        playPauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!music_paused){
+                    music_paused = true;
+                    music_paused_ms_position = clip.getMicrosecondPosition();
+                    clip.stop();
+
+                    Main.gameplay();
+
+                }
+
+                else{
+                    music_paused = false;
+                    clip.setMicrosecondPosition(music_paused_ms_position);
+                    clip.start();
+                    Main.gameplay();
+
+                }
+            }
+        });
+
+        if(contactNamesList.size() % 20 == 0){
+            JLabel lpage = tag(bookPages, "Page "+(pageAt+1)+" out of "+(contactNamesList.size()/20), bookWindowWidth-160, windowLength-110, 200, 20, true);
+        }
+        else{
+            JLabel lpage = tag(bookPages, "Page "+(pageAt+1)+" out of "+(contactNamesList.size()/20+1), bookWindowWidth-160, windowLength-110, 200, 20, true);
+        }
 
 
         //panel setups
@@ -175,30 +317,29 @@ public class InterFaces implements ActionListener, MouseListener {
         System.out.println("mouse clicked 2: ");
 
 
-        contactNames = new String[]{"Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Sanjeev", "Thomas", "Howie", "Howie",};
-        contactPhone = new String[]{"911", "912", "913", };
-        contactCompany = new String[]{"Microsoft", "Shopify", "Tesla"};
-        contactAddress = new String[]{"One Microsoft Way, Redmond, WA, USA", "151 O’Connor St Ground floor, Ottawa, ON K2P 2L8", "3500 Deer Creek Road. Palo Alto"};
-        int[] contactSocialCreditScore = {1, 1, 1};
-
         //contact Labels output
         int inPage_number = 0;
         int labelHeight = 20;
-        for(int this_contact_i = pageAt*20; this_contact_i<contactNames.length; this_contact_i++){
+        for(int this_contact_i = pageAt*20; this_contact_i<contactNamesList.size(); this_contact_i++){
             if(inPage_number == 20){
                 break;
             }
             StringBuilder this_contact_message_builder = new StringBuilder();
-            this_contact_message_builder.append(contactNames[this_contact_i]);
+            this_contact_message_builder.append(contactNamesList.get(this_contact_i));
             /*
 
             */
+            //this_contact_message_builder.append("123456789123456789");
+
             //System.out.println(this_contact_message_builder.toString());
-            if(inPage_number >= 10){
-                JLabel personNameLabel = tag(bookPages, this_contact_message_builder.toString(), windowWidth/2+80, (inPage_number-10)*labelHeight, windowWidth/2-100, labelHeight);
+            if(inPage_number < 10){
+                JLabel personNameLabel = tag(bookPages, contactNamesList.get(this_contact_i), 0, inPage_number*labelHeight, 200, labelHeight, false);
+                JLabel personPhoneLabel = tag(bookPages, contactPhoneList.get(this_contact_i), 200, (inPage_number)*labelHeight, 147, labelHeight, false);
             }
             else{
-                JLabel personNameLabel = tag(bookPages, this_contact_message_builder.toString(), 0, inPage_number*labelHeight, windowWidth/2-100, labelHeight);
+                JLabel personNameLabel = tag(bookPages, contactNamesList.get(this_contact_i), bookWindowWidth/2, (inPage_number-10)*labelHeight, 200, labelHeight, false);
+                JLabel personPhoneLabel = tag(bookPages, contactPhoneList.get(this_contact_i), bookWindowWidth/2+208, (inPage_number-10)*labelHeight, 145, labelHeight, false);
+
             }
 
 
@@ -209,127 +350,166 @@ public class InterFaces implements ActionListener, MouseListener {
 
     }
 
-    public static Object[] AddContact(){
+    public static void AddContact(JFrame this_frame){
 
-        //ask for name
-        String name = (String)JOptionPane.showInputDialog(
-                bookPages,
-                "Contact Name",
-                "Customized Dialog",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                "Stanislas");
+        JPanel thispanel = panel(this_frame, 500, 500,"False", false, false);
+
+        thispanel.setLayout(null);
+        openWindow(this_frame, thispanel, 0, false, "", "", "", "");
 
 
-        //System.out.println(name);
 
-        //ask for phone number
-        String phoneNumber = (String)JOptionPane.showInputDialog(
-                bookPages,
-                name+"\'s"
-                        + "phone number",
-                "Customized Dialog",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                "1335");
-
-        //System.out.println(phoneNumber);
-
-        //ask for address
-        String address = (String)JOptionPane.showInputDialog(
-                bookPages,
-                name+"\'s"
-                        + "address",
-                "Customized Dialog",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                "Buckingham Palace");
-
-        //System.out.println(address);
-
-        //ask for company name
-        String companyName = (String)JOptionPane.showInputDialog(
-                bookPages,
-                name+"\'s"
-                        + "company name",
-                "Customized Dialog",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                "MI6");
-
-        //System.out.println(companyName);
-
-        return new Object[]{(Object) name, (Object) phoneNumber, (Object) address, (Object) companyName};
     }
-    public static void openNewWindow(int id){
+    public static void openWindow(JFrame thisFrame, JPanel thispanel, int id, boolean alter, String this_name, String this_address, String this_company, String this_phone){
+
+        thispanel.removeAll();
+
+
+
+        JLabel lname = tag(thispanel, "Name: ", 40, 100, 800, 20, true);
+        lname.setForeground(Color.WHITE);
+
+        JTextField tname = new JTextField();
+        tname.setFont(new Font("Arial", Font.PLAIN, 15));
+        tname.setSize(200, 20);
+        tname.setLocation(100, 100);
+        tname.setVisible(true);
+        tname.setText(this_name);
+        thispanel.add(tname);
+
+
+
+        JLabel lphone = tag(thispanel, "Phone number: ", 40, 130, 800, 20, true);
+        lphone.setForeground(Color.WHITE);
+
+        JTextField tphone = new JTextField();
+        tphone.setFont(new Font("Arial", Font.PLAIN, 15));
+        tphone.setSize(200, 20);
+        tphone.setLocation(180, 130);
+        tphone.setVisible(true);
+        tphone.setText(this_phone);
+        thispanel.add(tphone);
+
+        JLabel lcompany = tag(thispanel, "Company: ", 40, 160, 800, 20, true);
+        lcompany.setForeground(Color.WHITE);
+
+        JTextField tcompany = new JTextField();
+        tcompany.setFont(new Font("Arial", Font.PLAIN, 15));
+        tcompany.setSize(200, 20);
+        tcompany.setLocation(130, 160);
+        tcompany.setVisible(true);
+        tcompany.setText(this_company);
+        thispanel.add(tcompany);
+
+
+        JLabel laddress = tag(thispanel, "Address: ", 40, 190, 800, 20, true);
+        laddress.setForeground(Color.WHITE);
+
+        JTextArea taddress = new JTextArea();
+        taddress.setLineWrap(true);
+        taddress.setWrapStyleWord(true);
+        taddress.setFont(new Font("Arial", Font.PLAIN, 15));
+        taddress.setSize(200, 100);
+        taddress.setLocation(130, 190);
+        taddress.setVisible(true);
+        taddress.setText(this_address);
+        JScrollPane scroll = new JScrollPane (taddress);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        thispanel.add(scroll, BorderLayout.CENTER);
+        thispanel.add(taddress);
+
+        //submit button
+        JButton sub = button(thispanel, "Update", 150, 400, 100, 20, false);
+        sub.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+
+                System.out.println("change to: "+tname.getText());
+                if(tname.toString().length() > 0){
+                    if(alter){
+                        contactNamesList.set(id, tname.getText());
+                        contactPhoneList.set(id, tphone.getText());
+                        contactAddressList.set(id, taddress.getText());
+                        contactCompanyList.set(id, tcompany.getText());
+                        JOptionPane.showMessageDialog(thispanel,
+                                "great you just edited a contact");
+                        thispanel.removeAll();
+                    }
+                    else{
+                        contactNamesList.add(tname.getText());
+                        contactPhoneList.add(tphone.getText());
+                        contactAddressList.add(taddress.getText());
+                        contactCompanyList.add(tcompany.getText());
+                        JOptionPane.showMessageDialog(thispanel,
+                                "great you just added one more contact");
+
+                    }
+                }
+                openWindow(thisFrame, thispanel, id, alter, tname.getText(), taddress.getText(), tcompany.getText(), tphone.getText());
+
+
+
+
+
+            }
+        });
+        thispanel.add(sub);
+        //cancel button
+
+        JButton cancelB = button(thispanel, "Cancel", 250, 400, 100, 20, false);
+
+        cancelB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(alter){
+                    System.out.println("change to: "+tname.getText());
+                    tname.setText(this_name);
+                    tphone.setText(this_phone);
+                    taddress.setText(this_address);
+                    tcompany.setText(this_company);
+
+                }
+                else {
+                    thisFrame.dispatchEvent(new WindowEvent(thisFrame, WindowEvent.WINDOW_CLOSING));
+                }
+
+            }
+        });
+
+
+
+    }
+    public static void openNewWindow(JFrame thisFrame, int id){
 
         System.out.println(ttname);
 
-        String this_name = contactNames[id];
-        //String this_address = contactAddress[id];
-        //String this_company = contactCompany[id];
-        //String this_phone = contactPhone[id];
-
-        JFrame thisFrame = new JFrame(this_name+"\'s detailed profile");
+        String this_name = contactNamesList.get(id);
+        String this_address = contactAddressList.get(id);
+        String this_company = contactCompanyList.get(id);
+        String this_phone = contactPhoneList.get(id);
 
         JPanel thispanel = panel(thisFrame, 500, 500,"False", false, false);
 
-        JButton edit = button(thispanel, "edit", 470, 0, 30, 30, false);
 
-        ActionListener newAL = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("edit pressed"+this_name);
-
-
-                thispanel.removeAll();
-
-
-                JTextField tname = new JTextField();
-                tname.setFont(new Font("Arial", Font.PLAIN, 15));
-                tname.setSize(200, 20);
-                tname.setLocation(100, 100);
-                tname.setVisible(true);
-                thispanel.add(tname);
-
-                JButton sub = new JButton("Submit");
-                sub.setFont(new Font("Arial", Font.PLAIN, 15));
-                sub.setSize(100, 20);
-                sub.setLocation(150, 400);
-                sub.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("change to: "+tname.getText());
-                        ttname = tname.getText();
-
-                    }
-                });
-
-
-                thispanel.add(sub);
-
-                thispanel.repaint();
-            }
-        };
-
-        edit.addActionListener(newAL);
 
         String displayName = "Name: "+this_name;
-        //String displayAddress = "Address: "+this_address;
-        //String displayCompany = "Company: "+this_company;
-
-        JLabel nameLabel = tag(thispanel, displayName, 0, 20*0, 100, 80);
+        String displayAddress = "Address: "+this_address;
+        String displayCompany = "Company: "+this_company;
+        /*
+        JLabel nameLabel = tag(thispanel, displayName, 0, 20*2, 100, 80);
+        nameLabel.setForeground(Color.WHITE);
         //JLabel addressLabel = tag(thispanel, displayAddress, 100, 200, 400, 80);
-        //JLabel companyLabel = tag(thispanel, displayCompany, 0, 100*2, 100, 20);
-
+        JLabel companyLabel = tag(thispanel, displayCompany, 0, 100, 100, 80);
+        companyLabel.setForeground(Color.WHITE);
+        */
+        openWindow(thisFrame, thispanel, id, true, this_name, this_address, this_company, this_phone);
+        thispanel.setLayout(null);
         thispanel.setVisible(true);
 
-        //windowsForContacts.add(thisFrame);
-
+        windowsForContacts.add(thisFrame);
     }
 
     @Override
@@ -343,7 +523,9 @@ public class InterFaces implements ActionListener, MouseListener {
                 Main.gameplay();
                 break;
             case "Add contact": //checks if Play or Rules Button is pressed
-                AddContact();
+                JFrame thisFrame = new JFrame("Add new contact");
+
+                AddContact(thisFrame);
 
                 System.out.println("pressed Add contact");
                 break;
@@ -369,9 +551,11 @@ public class InterFaces implements ActionListener, MouseListener {
                     int clickedContact = e.getY()/20+pageAtc*20;
                     //System.out.print("Contact number: "+clickedContact);
 
-                    if(clickedContact<contactNames.length){
-                        openNewWindow(clickedContact);
-                        //System.out.print("Contact name: "+contactNames[clickedContact]);
+                    if(clickedContact<contactNamesList.size()){
+                        String this_name = contactNamesList.get(clickedContact);
+                        JFrame thisFrame = new JFrame(this_name+"\'s profile");
+                        openNewWindow(thisFrame, clickedContact);
+                        //System.out.print("Contact name: "+contactNamesList.get(clickedContact));
                         //new frame list new everything
                     }
                 }
@@ -380,9 +564,11 @@ public class InterFaces implements ActionListener, MouseListener {
                     int clickedContact = e.getY()/20+pageAtc*20+10;
                     System.out.print("Contact number: "+clickedContact);
 
-                    if(clickedContact<contactNames.length){
-                        openNewWindow(clickedContact);
-                        //System.out.print("Contact name: "+contactNames[clickedContact]);
+                    if(clickedContact<contactNamesList.size()){
+                        String this_name = contactNamesList.get(clickedContact);
+                        JFrame thisFrame = new JFrame(this_name+"\'s profile");
+                        openNewWindow(thisFrame, clickedContact);
+                        //System.out.print("Contact name: "+contactNamesList.get(clickedContact));
                         //new frame list new everything
                     }
 
@@ -405,9 +591,9 @@ public class InterFaces implements ActionListener, MouseListener {
         //System.out.println(" "+e.getX()+", "+press_x);
         if(e.getX()-press_x>100){
 
-            bookPages.setBackground(Color.GREEN);
+            //bookPages.setBackground(Color.GREEN);
 
-            bookPages.repaint();
+            //bookPages.repaint();
 
             if(pageAtc>0){
                 pageAtc--;
@@ -417,14 +603,14 @@ public class InterFaces implements ActionListener, MouseListener {
 
         }
         else if (press_x-e.getX()>100){
-            bookPages.setBackground(Color.GREEN);
+            //bookPages.setBackground(Color.GREEN);
 
-            bookPages.repaint();
+            //bookPages.repaint();
 
 
-            if((double)contactNames.length/20-pageAtc>1){
+            if((double)contactNamesList.size()/20-pageAtc>1){
                 pageAtc++;
-                System.out.println("pageAtc"+pageAtc+", "+(double)contactNames.length/20+", "+contactNames.length);
+                System.out.println("pageAtc"+pageAtc+", "+(double)contactNamesList.size()/20+", "+contactNamesList.size());
                 Main.gameplay();
             }
         }
