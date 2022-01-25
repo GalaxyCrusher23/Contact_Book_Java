@@ -19,7 +19,7 @@ public class InterFaces implements ActionListener, MouseListener {
     
     public static JPanel startMenu = new JPanel();
     public static JPanel bookPages = new JPanel();
-    public static JFrame window = new JFrame("Blackjack");
+    public static JFrame window = new JFrame("Contact Book");
     public static ArrayList<JFrame> windowsForContacts = new ArrayList<JFrame>();
     public static boolean running = false;
     public static Color bookPaperColor = new Color(255, 229, 153);
@@ -43,10 +43,11 @@ public class InterFaces implements ActionListener, MouseListener {
     public static String ttname;
     public static boolean enteredPageAlready = false;
     public static List<String> contactNamesList = new ArrayList<String>();
-
     public static List<String> contactPhoneList = new ArrayList<String>();
     public static List<String> contactCompanyList = new ArrayList<String>();
     public static List<String> contactAddressList = new ArrayList<String>();
+
+    public static List<Contact> contacts = new ArrayList<Contact>();
 
     public static Clip clip = null;
     public static AudioInputStream audioinput = null;
@@ -434,6 +435,14 @@ public class InterFaces implements ActionListener, MouseListener {
                         contactPhoneList.set(id, tphone.getText());
                         contactAddressList.set(id, taddress.getText());
                         contactCompanyList.set(id, tcompany.getText());
+
+                        /*Contact editContact = contacts.get(id);
+                        editContact.setName(tname.getText());
+                        editContact.setPhone(Integer.parseInt(tphone.getText()));
+                        editContact.setAddress(taddress.getText());
+                        editContact.setCName(tcompany.getText());
+                        contacts.set(id, editContact);*/
+
                         JOptionPane.showMessageDialog(thispanel,
                                 "great you just edited a contact");
                         thispanel.removeAll();
@@ -443,6 +452,14 @@ public class InterFaces implements ActionListener, MouseListener {
                         contactPhoneList.add(tphone.getText());
                         contactAddressList.add(taddress.getText());
                         contactCompanyList.add(tcompany.getText());
+
+                        /*Contact newContact = new Contact();
+                        newContact.setName(tname.getText());
+                        newContact.setPhone(Integer.parseInt(tphone.getText()));
+                        newContact.setAddress(taddress.getText());
+                        newContact.setCName(tcompany.getText());
+                        contacts.add(newContact);*/
+
                         JOptionPane.showMessageDialog(thispanel,
                                 "great you just added one more contact");
 
@@ -490,6 +507,11 @@ public class InterFaces implements ActionListener, MouseListener {
         String this_address = contactAddressList.get(id);
         String this_company = contactCompanyList.get(id);
         String this_phone = contactPhoneList.get(id);
+
+        /*String this_name = contacts.get(id).getName();
+        String this_address = contacts.get(id).getAddress();
+        String this_company = contacts.get(id).getCName();
+        String this_phone = Integer.toString(contacts.get(id).getPhone());*/
 
         JPanel thispanel = panel(thisFrame, 500, 500,"False", false, false);
 
