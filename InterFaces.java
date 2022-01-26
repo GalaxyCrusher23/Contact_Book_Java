@@ -10,11 +10,12 @@ import java.util.List;
 import java.util.Random;
 
 public class InterFaces implements ActionListener, MouseListener {
-    public static String book_img_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\book.jpg";
-    public static String plus_img_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\plus.png";
-    public static String musicRoot_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\soviet_anthem.wav";
-    public static String musicIcon_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\music.jpg";
-    public static String noMusicIcon_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\no_music.jpg";
+    public static String book_img_str = "images/book.jpg";
+    public static String plus_img_str = "images/plus.png";
+    public static String musicIcon_str = "images/music.jpg";
+    public static String noMusicIcon_str = "images/no_music.jpg";
+    
+    public static String musicRoot_str = "music/soviet_anthem.wav";
     public static JPanel startMenu = new JPanel();
     public static JPanel bookPages = new JPanel();
     public static JFrame window = new JFrame("Blackjack");
