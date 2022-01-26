@@ -1,6 +1,8 @@
+import java.util.ArrayList;
+
 public class User
 {
-  public static Contact contact1 = new Contact(); 
-  public static Contact contact2 = new Contact();
+  public static List<Contact> contacts = new ArrayList<Contact>();
   
+
 }
