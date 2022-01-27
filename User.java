@@ -5,6 +5,7 @@ public class User
 {
   public static List<Contact> contacts = new ArrayList<Contact>();
   public static String userName;
+
   
   public void setName(String n)
   {
@@ -16,24 +17,28 @@ public class User
     return userName;
   }
 
-  public void editContact()
+  public void editContact(String cname, String cphone, String ccompany, String caddress, int contactindex)
   {
-    
+    Contact c = contacts.get(contactindex);
+    c.setName(cname);
+    c.setPhone(cphone);
+    c.setCName(ccompany);
+    c.setAddress(caddress);
+    contacts.set(contactindex,c);    
   }
 
-  public void addContact()
+  public void addContact(String cname, String cphone, String ccompany, String caddress)
   {
     Contact c = new Contact();
-    
+    c.setName(cname);
+    c.setPhone(cphone);
+    c.setCName(ccompany);
+    c.setAddress(caddress);
+    contacts.add(c);
   }
 
-  public void viewContact()
+  public void removeContact(int contactindex)
   {
-
-  }
-
-  public void removeContact()
-  {
-
+    contacts.remove(contactindex);
   }
 }
