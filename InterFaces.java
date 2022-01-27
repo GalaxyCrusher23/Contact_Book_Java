@@ -1,3 +1,4 @@
+package com.codewithhowie;
 //*****************************************
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -8,13 +9,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-public class InterFaces implements ActionListener, MouseListener {
-    public static String book_img_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\book.jpg";
-    public static String plus_img_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\plus.png";
-    public static String musicRoot_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\soviet_anthem.wav";
-    public static String musicIcon_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\music.jpg";
-    public static String noMusicIcon_str = "C:\\Users\\hhh43\\OneDrive\\Documents\\ICS4U\\PhoneBook\\no_music.jpg";
+public class InterFaces implements ActionListener, MouseListener {    public static String book_img_str = "images/book.jpg";
+    public static String plus_img_str = "images/plus.png";
+    public static String musicIcon_str = "images/music.jpg";
+    public static String noMusicIcon_str = "images/no_music.jpg";
+
+    public static String musicRoot_str = "music/soviet_anthem.wav";
     public static JPanel startMenu = new JPanel();
     public static JPanel bookPages = new JPanel();
     public static JFrame window = new JFrame("Blackjack");
@@ -169,12 +171,11 @@ public class InterFaces implements ActionListener, MouseListener {
         startMenu = panel(window, windowWidth, windowLength, book_img_str, false, true);
         startMenu.setBackground(Color.black);
         startMenu.setLayout(null);
+        //music
         File musicRoot = new File(musicRoot_str);
         try {
             audioinput = AudioSystem.getAudioInputStream(musicRoot);
-        } catch (UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
         }
         try {
@@ -184,9 +185,7 @@ public class InterFaces implements ActionListener, MouseListener {
         }
         try {
             clip.open(audioinput);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (LineUnavailableException | IOException e) {
             e.printStackTrace();
         }
         clip.start();
@@ -358,16 +357,7 @@ public class InterFaces implements ActionListener, MouseListener {
 
     }
 
-    public static void AddContact(JFrame this_frame){
 
-        JPanel thispanel = panel(this_frame, 500, 500,"False", false, false);
-
-        thispanel.setLayout(null);
-        openWindow(this_frame, thispanel, 0, false, "", "", "", "");
-
-
-
-    }
     public static void openWindow(JFrame thisFrame, JPanel thispanel, int id, boolean alter, String this_name, String this_address, String this_company, String this_phone){
 
         thispanel.removeAll();
@@ -514,36 +504,7 @@ public class InterFaces implements ActionListener, MouseListener {
     }
     public static void openNewWindow(JFrame thisFrame, int id){
 
-        System.out.println(ttname);
 
-        String this_name = User.contacts.get(id).getName();
-        String this_address = User.contacts.get(id).getAddress();
-        String this_company = User.contacts.get(id).getCName();
-        String this_phone = User.contacts.get(id).getPhone();
-
-        /*
-        contactNamesList
-        contactAddressList
-        contactCompanyList
-        contactPhoneList
-         */
-        JPanel thispanel = panel(thisFrame, 500, 500,"False", false, false);
-
-
-
-        String displayName = "Name: "+this_name;
-        String displayAddress = "Address: "+this_address;
-        String displayCompany = "Company: "+this_company;
-        /*
-        JLabel nameLabel = tag(thispanel, displayName, 0, 20*2, 100, 80);
-        nameLabel.setForeground(Color.WHITE);
-        //JLabel addressLabel = tag(thispanel, displayAddress, 100, 200, 400, 80);
-        JLabel companyLabel = tag(thispanel, displayCompany, 0, 100, 100, 80);
-        companyLabel.setForeground(Color.WHITE);
-        */
-        openWindow(thisFrame, thispanel, id, true, this_name, this_address, this_company, this_phone);
-        thispanel.setLayout(null);
-        thispanel.setVisible(true);
 
         //windowsForContacts.add(thisFrame);
     }
@@ -569,9 +530,20 @@ public class InterFaces implements ActionListener, MouseListener {
                 break;
         }
     }
+    public static void AddContact(JFrame this_frame){
 
+        JPanel thispanel = panel(this_frame, 500, 500,"False", false, false);
+
+        thispanel.setLayout(null);
+        openWindow(this_frame, thispanel, 0, false, "", "", "", "");
+
+
+
+    }
     @Override
     public void mouseClicked(MouseEvent e) {
+        press_x = e.getX();
+        press_y = e.getY();
         if (screen == 0){
             window.remove(startMenu);
             screen = 1;
@@ -579,35 +551,44 @@ public class InterFaces implements ActionListener, MouseListener {
 
         }
         if (screen == 1){
-            if(e.getY()>200){
-
-            }
-            else{
+            if(e.getY()<=200){
+                int clickedContact =-1;
                 if(e.getX()<windowWidth/2){
-                    int clickedContact = e.getY()/20+pageAtc*20;
+                    clickedContact = e.getY()/20+pageAtc*20;
                     //System.out.print("Contact number: "+clickedContact);
 
-                    if(clickedContact<User.contacts.size()){
-                        String this_name = User.contacts.get(clickedContact).getName();
-                        JFrame thisFrame = new JFrame(this_name+"\'s profile");
-                        openNewWindow(thisFrame, clickedContact);
-                        System.out.print("add");
-                        //new frame list new everything
-                    }
+
                 }
                 else{
 
-                    int clickedContact = e.getY()/20+pageAtc*20+10;
+                    clickedContact = e.getY()/20+pageAtc*20+10;
                     System.out.print("Contact number: "+clickedContact);
 
-                    if(clickedContact<User.contacts.size()){
-                        String this_name = User.contacts.get(clickedContact).getName();
-                        JFrame thisFrame = new JFrame(this_name+"\'s profile");
-                        openNewWindow(thisFrame, clickedContact);
-                        //System.out.print("Contact name: "+contactNamesList.get(clickedContact));
-                        //new frame list new everything
-                    }
 
+                }
+
+                if(clickedContact<User.contacts.size()){
+                    String this_name = User.contacts.get(clickedContact).getName();
+                    JFrame thisFrame = new JFrame(this_name+"\'s profile");
+                    openNewWindow(thisFrame, clickedContact);
+                    System.out.print("add");
+                    System.out.println(ttname);
+
+
+                    String this_address = User.contacts.get(clickedContact).getAddress();
+                    String this_company = User.contacts.get(clickedContact).getCName();
+                    String this_phone = User.contacts.get(clickedContact).getPhone();
+
+
+                    JPanel thispanel = panel(thisFrame, 500, 500,"False", false, false);
+                    thispanel.setLayout(null);
+
+
+                    openWindow(thisFrame, thispanel, clickedContact, true, this_name, this_address, this_company, this_phone);
+                    //thispanel.setLayout(null);
+                    //thispanel.setVisible(true);
+
+                    //new frame list new everything
                 }
             }
 
@@ -618,8 +599,6 @@ public class InterFaces implements ActionListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        press_x = e.getX();
-        press_y = e.getY();
     }
 
     @Override
