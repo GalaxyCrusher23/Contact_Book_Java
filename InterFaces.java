@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -304,10 +304,10 @@ public class InterFaces implements ActionListener, MouseListener {
         });
 
         if(contactNamesList.size() % 20 == 0){
-            JLabel lpage = tag(bookPages, "Page "+(pageAt+1)+" out of "+(Main.users.get(0).contacts.size()/20), bookWindowWidth-160, windowLength-110, 200, 20, true);
+            JLabel lpage = tag(bookPages, "Page "+(pageAt+1)+" out of "+(User.contacts.size()/20), bookWindowWidth-160, windowLength-110, 200, 20, true);
         }
         else{
-            JLabel lpage = tag(bookPages, "Page "+(pageAt+1)+" out of "+(Main.users.get(0).contacts.size()/20+1), bookWindowWidth-160, windowLength-110, 200, 20, true);
+            JLabel lpage = tag(bookPages, "Page "+(pageAt+1)+" out of "+(User.contacts.size()/20+1), bookWindowWidth-160, windowLength-110, 200, 20, true);
         }
 
 
@@ -321,7 +321,7 @@ public class InterFaces implements ActionListener, MouseListener {
         //contact Labels output
         int inPage_number = 0;
         int labelHeight = 20;
-        for(int this_contact_i = pageAt*20; this_contact_i<Main.users.get(0).contacts.size(); this_contact_i++){
+        for(int this_contact_i = pageAt*20; this_contact_i<User.contacts.size(); this_contact_i++){
             if(inPage_number == 20){
                 break;
             }
@@ -336,17 +336,17 @@ public class InterFaces implements ActionListener, MouseListener {
             if(inPage_number < 10){
 
                 //JLabel personNameLabel = tag(bookPages, contactNamesList.get(this_contact_i), 0, inPage_number*labelHeight, 200, labelHeight, false);
-                JLabel personNameLabel = tag(bookPages, Main.users.get(0).contacts.get(this_contact_i).getName(), 0, inPage_number*labelHeight, 200, labelHeight, false);
+                JLabel personNameLabel = tag(bookPages, User.contacts.get(this_contact_i).getName(), 0, inPage_number*labelHeight, 200, labelHeight, false);
 
                 //JLabel personPhoneLabel = tag(bookPages, contactPhoneList.get(this_contact_i), 200, (inPage_number)*labelHeight, 147, labelHeight, false);
-                JLabel personPhoneLabel = tag(bookPages, Main.users.get(0).contacts.get(this_contact_i).getPhone(), 200, (inPage_number)*labelHeight, 147, labelHeight, false);
+                JLabel personPhoneLabel = tag(bookPages, User.contacts.get(this_contact_i).getPhone(), 200, (inPage_number)*labelHeight, 147, labelHeight, false);
             }
             else{
                 //JLabel personNameLabel = tag(bookPages, contactNamesList.get(this_contact_i), bookWindowWidth/2, (inPage_number-10)*labelHeight, 200, labelHeight, false);
                 //JLabel personPhoneLabel = tag(bookPages, contactPhoneList.get(this_contact_i), bookWindowWidth/2+208, (inPage_number-10)*labelHeight, 145, labelHeight, false);
 
-                JLabel personNameLabel = tag(bookPages, Main.users.get(0).contacts.get(this_contact_i).getName(), bookWindowWidth/2, (inPage_number-10)*labelHeight, 200, labelHeight, false);
-                JLabel personPhoneLabel = tag(bookPages, Main.users.get(0).contacts.get(this_contact_i).getPhone(), bookWindowWidth/2+208, (inPage_number-10)*labelHeight, 145, labelHeight, false);
+                JLabel personNameLabel = tag(bookPages, User.contacts.get(this_contact_i).getName(), bookWindowWidth/2, (inPage_number-10)*labelHeight, 200, labelHeight, false);
+                JLabel personPhoneLabel = tag(bookPages, User.contacts.get(this_contact_i).getPhone(), bookWindowWidth/2+208, (inPage_number-10)*labelHeight, 145, labelHeight, false);
 
             }
 
@@ -371,6 +371,7 @@ public class InterFaces implements ActionListener, MouseListener {
     public static void openWindow(JFrame thisFrame, JPanel thispanel, int id, boolean alter, String this_name, String this_address, String this_company, String this_phone){
 
         thispanel.removeAll();
+
 
 
 
@@ -429,7 +430,14 @@ public class InterFaces implements ActionListener, MouseListener {
         thispanel.add(taddress);
 
         //submit button
-        JButton sub = button(thispanel, "Update", 150, 400, 100, 20, false);
+        JButton sub;
+        if(alter){
+            sub = button(thispanel, "Update", 100, 400, 100, 20, false);
+
+        }
+        else{
+            sub = button(thispanel, "Add", 100, 400, 100, 20, false);
+        }
         sub.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -438,21 +446,11 @@ public class InterFaces implements ActionListener, MouseListener {
                 System.out.println("change to: "+tname.getText());
                 if(tname.toString().length() > 0){
 
-                        Contact theContact;
-                        if(alter) {
-                            theContact = Main.users.get(0).contacts.get(id);
 
-                        }
-                        else{
-                            theContact = new Contact();
-                        }
-                        theContact.setName(tname.getText());
-                        theContact.setPhone(tphone.getText());
-                        theContact.setAddress(taddress.getText());
-                        theContact.setCName(tcompany.getText());
 
                         if(alter) {
-                            Main.users.get(0).contacts.set(id, theContact);
+
+                            User.editContact(tname.getText(), tphone.getText(), tcompany.getText(), taddress.getText(), id);
 
                             JOptionPane.showMessageDialog(thispanel,
                                     "great you just edited a contact");
@@ -460,7 +458,7 @@ public class InterFaces implements ActionListener, MouseListener {
 
                         }
                         else{
-                            Main.users.get(0).contacts.add(theContact);
+                            User.addContact(tname.getText(), tphone.getText(), tcompany.getText(), taddress.getText());
                             JOptionPane.showMessageDialog(thispanel,
                                     "great you just added one more contact");
 
@@ -481,7 +479,7 @@ public class InterFaces implements ActionListener, MouseListener {
         thispanel.add(sub);
         //cancel button
 
-        JButton cancelB = button(thispanel, "Cancel", 250, 400, 100, 20, false);
+        JButton cancelB = button(thispanel, "Cancel", 200, 400, 100, 20, false);
 
         cancelB.addActionListener(new ActionListener() {
             @Override
@@ -500,12 +498,12 @@ public class InterFaces implements ActionListener, MouseListener {
 
             }
         });
-        JButton deleteB = button(thispanel, "Delete", 350, 400, 100, 20, false);
+        JButton deleteB = button(thispanel, "Delete", 300, 400, 100, 20, false);
 
         deleteB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.users.get(0).removeContact(id);
+                User.removeContact(id);
                 //thisFrame.dispatchEvent(new WindowEvent(thisFrame, WindowEvent.WINDOW_CLOSING));
                 Main.gameplay();
 
@@ -518,10 +516,10 @@ public class InterFaces implements ActionListener, MouseListener {
 
         System.out.println(ttname);
 
-        String this_name = Main.users.get(0).contacts.get(id).getName();
-        String this_address = Main.users.get(0).contacts.get(id).getAddress();
-        String this_company = Main.users.get(0).contacts.get(id).getCName();
-        String this_phone = Main.users.get(0).contacts.get(id).getPhone();
+        String this_name = User.contacts.get(id).getName();
+        String this_address = User.contacts.get(id).getAddress();
+        String this_company = User.contacts.get(id).getCName();
+        String this_phone = User.contacts.get(id).getPhone();
 
         /*
         contactNamesList
@@ -589,11 +587,11 @@ public class InterFaces implements ActionListener, MouseListener {
                     int clickedContact = e.getY()/20+pageAtc*20;
                     //System.out.print("Contact number: "+clickedContact);
 
-                    if(clickedContact<Main.users.get(0).contacts.size()){
-                        String this_name = Main.users.get(0).contacts.get(clickedContact).getName();
+                    if(clickedContact<User.contacts.size()){
+                        String this_name = User.contacts.get(clickedContact).getName();
                         JFrame thisFrame = new JFrame(this_name+"\'s profile");
                         openNewWindow(thisFrame, clickedContact);
-                        //System.out.print("Contact name: "+contactNamesList.get(clickedContact));
+                        System.out.print("add");
                         //new frame list new everything
                     }
                 }
@@ -602,8 +600,8 @@ public class InterFaces implements ActionListener, MouseListener {
                     int clickedContact = e.getY()/20+pageAtc*20+10;
                     System.out.print("Contact number: "+clickedContact);
 
-                    if(clickedContact<Main.users.get(0).contacts.size()){
-                        String this_name = Main.users.get(0).contacts.get(clickedContact).getName();
+                    if(clickedContact<User.contacts.size()){
+                        String this_name = User.contacts.get(clickedContact).getName();
                         JFrame thisFrame = new JFrame(this_name+"\'s profile");
                         openNewWindow(thisFrame, clickedContact);
                         //System.out.print("Contact name: "+contactNamesList.get(clickedContact));
@@ -646,9 +644,9 @@ public class InterFaces implements ActionListener, MouseListener {
             //bookPages.repaint();
 
 
-            if((double)Main.users.get(0).contacts.size()/20-pageAtc>1){
+            if((double)User.contacts.size()/20-pageAtc>1){
                 pageAtc++;
-                System.out.println("pageAtc"+pageAtc+", "+(double)Main.users.get(0).contacts.size()/20+", "+Main.users.get(0).contacts.size());
+                System.out.println("pageAtc"+pageAtc+", "+(double)User.contacts.size()/20+", "+User.contacts.size());
                 Main.gameplay();
             }
         }
