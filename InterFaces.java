@@ -1,4 +1,3 @@
-package com.codewithhowie;
 //*****************************************
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -17,7 +16,7 @@ public class InterFaces implements ActionListener, MouseListener {    public sta
     public static String noMusicIcon_str = "images/no_music.jpg";
 
     public static String musicRoot_str = "music/soviet_anthem.wav";
-    public static JPanel startMenu = new JPanel();
+     public static JPanel startMenu = new JPanel();
     public static JPanel bookPages = new JPanel();
     public static JFrame window = new JFrame("Blackjack");
     //public static ArrayList<JFrame> windowsForContacts = new ArrayList<JFrame>();
@@ -209,25 +208,24 @@ public class InterFaces implements ActionListener, MouseListener {    public sta
 
         contactAddress = new String[]{"One Microsoft Way, Redmond, WA, USA", "151 O\'Connor St Ground floor, Ottawa, ON K2P 2L8", "3500 Deer Creek Road. Palo Alto, California, United States of America"};
 
-        contactNames = new String[]{"Sanjeev", "Thomas", "HowieHowieHowieHowieHowie"};
+        contactNames = new String[]{"Sanjeev", "Thomas", "Howie"};
         Random rand = new Random();
         for(int i = 0; i<37; i++){
             contactNamesList.add(contactNames[rand.nextInt(3)]);
+
+            Contact this_contact = new Contact();
             if (contactNamesList.get(i) == "Sanjeev"){
-                contactPhoneList.add("911-111-000000");
-                contactCompanyList.add("Microsoft");
-                contactAddressList.add("One Microsoft Way, Redmond, WA, USA");
+                this_contact = new Contact("Sanjeev", "911","Microsoft","One Microsoft Way, Redmond, WA, USA");
             }
             else if (contactNamesList.get(i) == "Thomas"){
-                contactPhoneList.add("912");
-                contactCompanyList.add("Shopify");
-                contactAddressList.add("151 O\'Connor St Ground floor, Ottawa, ON K2P 2L8");
+                this_contact = new Contact("Thomas", "912","Shopify","151 O\'Connor St Ground floor, Ottawa, ON K2P 2L8");
+
             }
-            else if (contactNamesList.get(i) == "HowieHowieHowieHowieHowie"){
-                contactPhoneList.add("913");
-                contactCompanyList.add("Tesla");
-                contactAddressList.add("3500 Deer Creek Road. Palo Alto, California, United States of America");
+            else if (contactNamesList.get(i) == "Howie"){
+                this_contact = new Contact("Howie", "913","Tesla","3500 Deer Creek Road. Palo Alto, California, United States of America");
             }
+
+            User.addContact(this_contact.name, this_contact.phone, this_contact.companyName, this_contact.address);
         }
 
         System.out.println(contactNamesList.size());
