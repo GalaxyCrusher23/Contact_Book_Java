@@ -1,7 +1,7 @@
 public class Contact{
 
   public String name;
-  public int phone;
+  public String phone;
   public String companyName;
   public String address;
   public int socialCreditScore;
@@ -23,7 +23,7 @@ public class Contact{
     name = n;
   }
 
-  public void setPhone(int p)
+  public void setPhone(String p)
   {
     phone = p;
   }
@@ -43,7 +43,7 @@ public class Contact{
     return name;
   }
 
-  public int getPhone()
+  public String getPhone()
   {
     return phone;
   }
